@@ -54,16 +54,16 @@ class CameraGeometry(object):
 
     def initGeometryFromObservations(self, observations):
         #obtain focal length guess
-        success = self.geometry.initializeIntrinsics(observations)
-        if not success:
-            sm.logError("initialization of focal length for cam with topic {0} failed  ".format(self.dataset.topic))
+        # success = self.geometry.initializeIntrinsics(observations)
+        # if not success:
+        #     sm.logError("initialization of focal length for cam with topic {0} failed  ".format(self.dataset.topic))
         
-        #in case of an omni model, first optimize over intrinsics only
-        #(--> catch most of the distortion with the projection model)
-        if self.model == acvb.DistortedOmni:
-            success = kcc.calibrateIntrinsics(self, observations, distortionActive=False)
-            if not success:
-                sm.logError("initialization of intrinsics for cam with topic {0} failed  ".format(self.dataset.topic))
+        # #in case of an omni model, first optimize over intrinsics only
+        # #(--> catch most of the distortion with the projection model)
+        # if self.model == acvb.DistortedOmni:
+        #     success = kcc.calibrateIntrinsics(self, observations, distortionActive=False)
+        #     if not success:
+        #         sm.logError("initialization of intrinsics for cam with topic {0} failed  ".format(self.dataset.topic))
         
         #optimize for intrinsics & distortion    
         success = kcc.calibrateIntrinsics(self, observations)
@@ -176,7 +176,7 @@ class CalibrationTargetOptimizationProblem(ic.CalibrationOptimizationProblem):
         for camera in cameras:
             if not camera.isGeometryInitialized:
                 raise RuntimeError('The camera geometry is not initialized. Please initialize with initGeometry() or initGeometryFromDataset()')
-            camera.setDvActiveStatus(True, True, False)
+            camera.setDvActiveStatus(False, False, False)
             rval.addDesignVariable(camera.dv.distortionDesignVariable(), CALIBRATION_GROUP_ID)
             rval.addDesignVariable(camera.dv.projectionDesignVariable(), CALIBRATION_GROUP_ID)
             rval.addDesignVariable(camera.dv.shutterDesignVariable(), CALIBRATION_GROUP_ID)

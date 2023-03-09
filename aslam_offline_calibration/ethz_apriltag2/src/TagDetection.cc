@@ -73,7 +73,7 @@ bool TagDetection::overlapsTooMuch(const TagDetection &other) const {
   return ( dist < radius );
 }
 
-Eigen::Matrix4d TagDetection::getRelativeTransform(double tag_size, double fx, double fy, double px, double py) const {
+Eigen::Matrix4d TagDetection::getRelativeTransform(double tag_size, double fx, double fy, double px, double py, cv::Mat distParams) const {
   std::vector<cv::Point3f> objPts;
   std::vector<cv::Point2f> imgPts;
   double s = tag_size/2.;
@@ -96,8 +96,8 @@ Eigen::Matrix4d TagDetection::getRelativeTransform(double tag_size, double fx, d
                            fx, 0, px,
                            0, fy, py,
                            0,  0,  1);
-  cv::Vec4f distParam(0,0,0,0); // all 0?
-  cv::solvePnP(objPts, imgPts, cameraMatrix, distParam, rvec, tvec);
+  //cv::Vec4f distParam(0,0,0,0); // all 0?
+  cv::solvePnP(objPts, imgPts, cameraMatrix, distParams, rvec, tvec);
   cv::Matx33d r;
   cv::Rodrigues(rvec, r);
   Eigen::Matrix3d wRo;
@@ -111,10 +111,10 @@ Eigen::Matrix4d TagDetection::getRelativeTransform(double tag_size, double fx, d
   return T;
 }
 
-void TagDetection::getRelativeTranslationRotation(double tag_size, double fx, double fy, double px, double py,
-                                                  Eigen::Vector3d& trans, Eigen::Matrix3d& rot) const {
+void TagDetection::getRelativeTranslationRotation(double tag_size, double fx, double fy, double px, double py, cv::Mat distParams,
+                                                  Eigen::Vector3d& trans, Eigen::Matrix3d& rot) const {                                               
   Eigen::Matrix4d T =
-    getRelativeTransform(tag_size, fx, fy, px, py);
+    getRelativeTransform(tag_size, fx, fy, px, py, distParams );
 
   // converting from camera frame (z forward, x right, y down) to
   // object frame (x forward, y left, z up)

@@ -113,6 +113,7 @@ class MulticamCalibrationGraph(object):
     #        baselines:    list of baselines starting from cam0 to camN
     #                      direction: baseline_O => cam0 to cam1 (T_c1_c0)
     def getInitialGuesses(self, cameras):
+        print(cameras[1].geometry.projection().getParameters().flatten())
         
         if not self.G:
             raise RuntimeError("Graph is uninitialized!")

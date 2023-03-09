@@ -212,6 +212,13 @@ def main():
     initOutlierRejection=True
     removedOutlierCorners=list() 
     while True:
+        print("WTH")
+        cameraList[0].geometry.projection().setParameters(np.array([609.6598510742188, 608.3814086914062, 314.3277893066406,236.36318969726562]))
+        cameraList[0].geometry.projection().distortion().setParameters(np.array([0,0,0,0]))
+        print("\tProjection initialized to: %s" % cameraList[0].geometry.projection().getParameters().flatten())
+
+        cameraList[1].geometry.projection().setParameters(np.array([648.2322998046875, 647.4974975585938,  639.9681396484375,361.8551940917969]))
+        cameraList[1].geometry.projection().distortion().setParameters(np.array([0,0,0,0]))
         try:
             #compute initial guesses for the baselines, intrinsics
             print("initializing initial guesses")

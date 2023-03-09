@@ -151,12 +151,12 @@ public:
     m_tagDetector(NULL),
     m_tagCodes(AprilTags::tagCodes36h11),
 
-    m_draw(true),
+    m_draw(false),
     m_arduino(false),
 
     m_width(640),
     m_height(480),
-    m_tagSize(0.166),
+    m_tagSize(0.05),
     m_fx(600),
     m_fy(600),
     m_px(m_width/2),
@@ -332,7 +332,8 @@ public:
 
     Eigen::Vector3d translation;
     Eigen::Matrix3d rotation;
-    detection.getRelativeTranslationRotation(m_tagSize, m_fx, m_fy, m_px, m_py,
+    cv::Mat distParam{ 5, 1, CV_64F, {0,0,0,0,0};
+    detection.getRelativeTranslationRotation(m_tagSize, m_fx, m_fy, m_px, m_py, distParam
                                              translation, rotation);
 
     Eigen::Matrix3d F;
@@ -370,8 +371,11 @@ public:
     double last_t = tic();
     while (true) {
 
+      // std::string image_path = samples::findFile("/data/image.png");
+      // image = imread(image_path, IMREAD_COLOR);
+
       // capture frame
-      m_cap >> image;
+       m_cap >> image;
 
       // alternative way is to grab, then retrieve; allows for
       // multiple grab when processing below frame rate - v4l keeps a
@@ -404,7 +408,8 @@ public:
           // only the first detected tag is sent out for now
           Eigen::Vector3d translation;
           Eigen::Matrix3d rotation;
-          detections[0].getRelativeTranslationRotation(m_tagSize, m_fx, m_fy, m_px, m_py,
+          cv::Mat distParam{ 5, 1, CV_64F, {0,0,0,0,0};
+          detections[0].getRelativeTranslationRotation(m_tagSize, m_fx, m_fy, m_px, m_py, distParam
                                                        translation, rotation);
           m_serial.print(detections[0].id);
           m_serial.print(",");
